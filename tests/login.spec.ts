@@ -1,11 +1,14 @@
 import { test, expect } from '@playwright/test'
 
 import { LoginPage } from '../pages/login.page'
+import { Navbar } from '../pages/components/navbar'
 
 let loginPage: LoginPage
+let navbar: Navbar
 
 test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page)
+    navbar = new Navbar(page)
 
     // Arrange
     await loginPage.go()
@@ -16,7 +19,7 @@ test('should authenticate inside missions control', async ({ page }) => {
     await loginPage.login('buzz@lunarpass.dev', 'pwd123')
 
     // Assert
-    await loginPage.isLoggedUser()
+    await expect(navbar.logout).toBeVisible()
 
 })
 

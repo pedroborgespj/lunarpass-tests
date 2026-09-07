@@ -23,8 +23,4 @@ export class LoginPage {
         await this.page.getByRole('button', { name: 'Entrar' }).click()
     }
 
-    async isLoggedUser() {
-        const logoutButton = this.page.getByRole('button', { name: 'Sair' })
-        await expect(logoutButton).toBeVisible()
-    }
 }
