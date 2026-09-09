@@ -10,6 +10,29 @@ import { Toast } from '../pages/components/toast'
 
 import { Mission } from '../support/mission'
 
+let loginPage: LoginPage
+let dashPage: DashPage
+let registerPage: RegisterPage
+
+let navbar: Navbar
+let toast: Toast
+
+test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page)
+    dashPage = new DashPage(page)
+    registerPage = new RegisterPage(page)
+
+    navbar = new Navbar(page)
+    toast = new Toast(page)
+
+    await loginPage.go()
+    await loginPage.login('buzz@lunarpass.dev', 'pwd123')
+    await expect(navbar.logout).toBeVisible()
+
+    await dashPage.addButton.click()
+    await expect(registerPage.title).toBeVisible()
+})
+
 test('should register a new mission', async ({ page }) => {
 
     const mission: Mission = {
@@ -21,19 +44,6 @@ test('should register a new mission', async ({ page }) => {
         price: '1000'
     }
 
-    const loginPage = new LoginPage(page)
-    const dashPage = new DashPage(page)
-    const registerPage = new RegisterPage(page)
-
-    const navbar = new Navbar(page)
-    const toast = new Toast(page)
-
-    await loginPage.go()
-    await loginPage.login('buzz@lunarpass.dev', 'pwd123')
-    await expect(navbar.logout).toBeVisible()
-
-    await dashPage.addButton.click()
-    await expect(registerPage.title).toBeVisible()
     await registerPage.submit(mission)
 
     await expect(toast.message).toContainText('A nova missão foi adicionada ao catálogo e já está disponível para reservas.')
@@ -50,19 +60,23 @@ test('should not register with incorrect mission id format', async ({ page }) =>
         price: '1000'
     }
 
-    const loginPage = new LoginPage(page)
-    const dashPage = new DashPage(page)
-    const registerPage = new RegisterPage(page)
-    
-    const navbar = new Navbar(page)
-
-    await loginPage.go()
-    await loginPage.login('buzz@lunarpass.dev', 'pwd123')
-    await expect(navbar.logout).toBeVisible()
-
-    await dashPage.addButton.click()
-    await expect(registerPage.title).toBeVisible()
     await registerPage.submit(mission)
 
     await expect(registerPage.alert).toHaveText('Use o formato LP-0000')
+})
+
+test('should not register with duplicated mission id', async ({ page }) => {
+
+    const mission: Mission = {
+        id: 'LP-0127A',
+        rocket: 'Starship',
+        lunarBase: 'aurora',
+        departureDate: '2028-01-20',
+        returnDate: '27 de jan. de 2028',
+        price: '1000'
+    }
+
+    await registerPage.submit(mission)
+
+    await expect(registerPage.alert).toHaveText('Já existe uma missão com este ID.')
 })
