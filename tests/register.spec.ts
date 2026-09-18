@@ -8,9 +8,9 @@ import { RegisterPage } from '../pages/register.page'
 import { Navbar } from '../pages/components/navbar'
 import { Toast } from '../pages/components/toast'
 
-import { Mission } from '../support/mission'
+import { Mission } from '../support/types'
 
-import { insertMission, deleteMission, deleteReservation, deleteTicket } from '../support/db'
+import { cleanAndInsertMission, cleanMission } from '../support/db'
 
 let loginPage: LoginPage
 let dashPage: DashPage
@@ -38,13 +38,15 @@ test.beforeEach(async ({ page }) => {
 test('should register a new mission', async ({ page }) => {
 
     const mission: Mission = {
-        id: 'LP-' + faker.string.alphanumeric({length: {min: 5, max: 5}, casing: 'upper'}),
+        id: 'LP-0128A',
         rocket: 'Starship',
-        lunarBase: 'aurora',
+        baseId: 'aurora',
         departureDate: '2028-01-20',
-        returnDate: '27 de jan. de 2028',
-        price: '1000'
+        returnDate: '2028-01-27',
+        price: 1000.00
     }
+
+    await cleanMission(mission)
 
     await registerPage.submit(mission)
 
@@ -56,10 +58,10 @@ test('should not register with incorrect mission id format', async ({ page }) =>
     const mission: Mission = {
         id: faker.string.alphanumeric({length: {min: 5, max: 5}, casing: 'upper'}),
         rocket: 'Starship',
-        lunarBase: 'aurora',
+        baseId: 'aurora',
         departureDate: '2028-01-20',
-        returnDate: '27 de jan. de 2028',
-        price: '1000'
+        returnDate: '2028-01-27',
+        price: 1000.00
     }
 
     await registerPage.submit(mission)
@@ -70,18 +72,15 @@ test('should not register with incorrect mission id format', async ({ page }) =>
 test('should not register with duplicated mission id', async ({ page }) => {
 
     const mission: Mission = {
-        id: 'LP-DUP01',
+        id: 'LP-3001A',
         rocket: 'Starship',
-        lunarBase: 'aurora',
-        departureDate: '2028-01-20',
-        returnDate: '27 de jan. de 2028',
-        price: '1000'
+        baseId: 'orion',
+        departureDate: '2030-01-20',
+        returnDate: '2030-01-27',
+        price: 500.00
     }
 
-    await deleteReservation(mission.id)
-    await deleteTicket(mission.id)
-    await deleteMission(mission.id)
-    await insertMission(mission.id)
+    await cleanAndInsertMission(mission)
 
     await registerPage.submit(mission)
 
