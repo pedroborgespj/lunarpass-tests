@@ -1,41 +1,20 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../support'
 import { faker } from '@faker-js/faker'
-
-import { LoginPage } from '../pages/login.page'
-import { DashPage } from '../pages/dash.page'
-import { RegisterPage } from '../pages/register.page'
-
-import { Navbar } from '../pages/components/navbar'
-import { Toast } from '../pages/components/toast'
 
 import { Mission } from '../support/types'
 
 import { cleanAndInsertMission, cleanMission } from '../support/db'
 
-let loginPage: LoginPage
-let dashPage: DashPage
-let registerPage: RegisterPage
+test.beforeEach(async ({ app }) => {
+    await app.loginPage.go()
+    await app.loginPage.login('buzz@lunarpass.dev', 'pwd123')
+    await expect(app.navbar.logout).toBeVisible()
 
-let navbar: Navbar
-let toast: Toast
-
-test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page)
-    dashPage = new DashPage(page)
-    registerPage = new RegisterPage(page)
-
-    navbar = new Navbar(page)
-    toast = new Toast(page)
-
-    await loginPage.go()
-    await loginPage.login('buzz@lunarpass.dev', 'pwd123')
-    await expect(navbar.logout).toBeVisible()
-
-    await dashPage.addButton.click()
-    await expect(registerPage.title).toBeVisible()
+    await app.dashPage.addButton.click()
+    await expect(app.registerPage.title).toBeVisible()
 })
 
-test('should register a new mission', async ({ page }) => {
+test('should register a new mission', async ({ app }) => {
 
     const mission: Mission = {
         id: 'LP-0128A',
@@ -48,12 +27,12 @@ test('should register a new mission', async ({ page }) => {
 
     await cleanMission(mission)
 
-    await registerPage.submit(mission)
+    await app.registerPage.submit(mission)
 
-    await expect(toast.message).toContainText('A nova missão foi adicionada ao catálogo e já está disponível para reservas.')
+    await expect(app.toast.message).toContainText('A nova missão foi adicionada ao catálogo e já está disponível para reservas.')
 })
 
-test('should not register with incorrect mission id format', async ({ page }) => {
+test('should not register with incorrect mission id format', async ({ app }) => {
 
     const mission: Mission = {
         id: faker.string.alphanumeric({length: {min: 5, max: 5}, casing: 'upper'}),
@@ -64,12 +43,12 @@ test('should not register with incorrect mission id format', async ({ page }) =>
         price: 1000.00
     }
 
-    await registerPage.submit(mission)
+    await app.registerPage.submit(mission)
 
-    await expect(registerPage.alert).toHaveText('Use o formato LP-0000')
+    await expect(app.registerPage.alert).toHaveText('Use o formato LP-0000')
 })
 
-test('should not register with duplicated mission id', async ({ page }) => {
+test('should not register with duplicated mission id', async ({ app }) => {
 
     const mission: Mission = {
         id: 'LP-3001A',
@@ -82,7 +61,7 @@ test('should not register with duplicated mission id', async ({ page }) => {
 
     await cleanAndInsertMission(mission)
 
-    await registerPage.submit(mission)
+    await app.registerPage.submit(mission)
 
-    await expect(registerPage.alert).toHaveText('Já existe uma missão com este ID.')
+    await expect(app.registerPage.alert).toHaveText('Já existe uma missão com este ID.')
 })

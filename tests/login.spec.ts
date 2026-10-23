@@ -1,59 +1,50 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../support'
 
-import { LoginPage } from '../pages/login.page'
-import { Navbar } from '../pages/components/navbar'
-
-let loginPage: LoginPage
-let navbar: Navbar
-
-test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page)
-    navbar = new Navbar(page)
-
+test.beforeEach(async ({ app }) => {
     // Arrange
-    await loginPage.go()
+    await app.loginPage.go()
 })
 
-test('should authenticate inside missions control', async ({ page }) => {
+test('should authenticate inside missions control', async ({ app }) => {
     // Act
-    await loginPage.login('buzz@lunarpass.dev', 'pwd123')
+    await app.loginPage.login('buzz@lunarpass.dev', 'pwd123')
 
     // Assert
-    await expect(navbar.logout).toBeVisible()
+    await expect(app.navbar.logout).toBeVisible()
 
 })
 
-test('should not authenticate with incorrect password', async ({ page }) => {
-    await loginPage.login('buzz@lunarpass.dev', 'abc123')
+test('should not authenticate with incorrect password', async ({ app }) => {
+    await app.loginPage.login('buzz@lunarpass.dev', 'abc123')
 
-    await expect(loginPage.alert).toHaveText('E-mail ou senha inválidos.')
-
-})
-
-test('should not authenticate with unregistered email', async ({ page }) => {
-    await loginPage.login('404@lunarpass.dev', 'pwd123')
-
-    await expect(loginPage.alert).toHaveText('E-mail ou senha inválidos.')
+    await expect(app.loginPage.alert).toHaveText('E-mail ou senha inválidos.')
 
 })
 
-test('should not authenticate when password is not set', async ({ page }) => {
-    await loginPage.login('buzz@lunarpass.dev', '')
+test('should not authenticate with unregistered email', async ({ app }) => {
+    await app.loginPage.login('404@lunarpass.dev', 'pwd123')
 
-    await expect(loginPage.alert).toHaveText('Informe a senha')
-
-})
-
-test('should not authenticate when email is not set', async ({ page }) => {
-    await loginPage.login('', 'pwd123')
-
-    await expect(loginPage.alert).toHaveText('Informe um e-mail válido')
+    await expect(app.loginPage.alert).toHaveText('E-mail ou senha inválidos.')
 
 })
 
-test('should not authenticate when email and password are not set', async ({ page }) => {
-    await loginPage.login('', '')
+test('should not authenticate when password is not set', async ({ app }) => {
+    await app.loginPage.login('buzz@lunarpass.dev', '')
 
-    await expect(loginPage.alert).toHaveText('Informe um e-mail válido')
+    await expect(app.loginPage.alert).toHaveText('Informe a senha')
+
+})
+
+test('should not authenticate when email is not set', async ({ app }) => {
+    await app.loginPage.login('', 'pwd123')
+
+    await expect(app.loginPage.alert).toHaveText('Informe um e-mail válido')
+
+})
+
+test('should not authenticate when email and password are not set', async ({ app }) => {
+    await app.loginPage.login('', '')
+
+    await expect(app.loginPage.alert).toHaveText('Informe um e-mail válido')
 
 })
