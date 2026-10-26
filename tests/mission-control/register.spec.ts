@@ -6,12 +6,12 @@ import { Mission } from '../../support/types'
 import { cleanAndInsertMission, cleanMission } from '../../support/db'
 
 test.beforeEach(async ({ app }) => {
-    await app.loginPage.go()
-    await app.loginPage.login('buzz@lunarpass.dev', 'pwd123')
-    await expect(app.navbar.logout).toBeVisible()
+    await app.mission.loginPage.go()
+    await app.mission.loginPage.login('buzz@lunarpass.dev', 'pwd123')
+    await expect(app.mission.navbar.logout).toBeVisible()
 
-    await app.dashPage.addButton.click()
-    await expect(app.registerPage.title).toBeVisible()
+    await app.mission.dashPage.addButton.click()
+    await expect(app.mission.registerPage.title).toBeVisible()
 })
 
 test('should register a new mission', async ({ app }) => {
@@ -27,7 +27,7 @@ test('should register a new mission', async ({ app }) => {
 
     await cleanMission(mission)
 
-    await app.registerPage.submit(mission)
+    await app.mission.registerPage.submit(mission)
 
     await expect(app.toast.message).toContainText('A nova missão foi adicionada ao catálogo e já está disponível para reservas.')
 })
@@ -43,9 +43,9 @@ test('should not register with incorrect mission id format', async ({ app }) => 
         price: 1000.00
     }
 
-    await app.registerPage.submit(mission)
+    await app.mission.registerPage.submit(mission)
 
-    await expect(app.registerPage.alert).toHaveText('Use o formato LP-0000')
+    await expect(app.mission.registerPage.alert).toHaveText('Use o formato LP-0000')
 })
 
 test('should not register with duplicated mission id', async ({ app }) => {
@@ -61,7 +61,7 @@ test('should not register with duplicated mission id', async ({ app }) => {
 
     await cleanAndInsertMission(mission)
 
-    await app.registerPage.submit(mission)
+    await app.mission.registerPage.submit(mission)
 
-    await expect(app.registerPage.alert).toHaveText('Já existe uma missão com este ID.')
+    await expect(app.mission.registerPage.alert).toHaveText('Já existe uma missão com este ID.')
 })

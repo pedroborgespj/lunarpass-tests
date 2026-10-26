@@ -4,13 +4,21 @@ import { LoginPage } from '../pages/mission-control/login.page'
 import { DashPage } from '../pages/mission-control/dash.page'
 import { RegisterPage } from '../pages/mission-control/register.page'
 import { Navbar } from '../pages/mission-control/navbar'
+
+import { HomePage } from '../pages/storefront/home.page'
+
 import { Toast } from '../pages/shared/toast'
 
 const createApp = (page: Page) => ({
-    loginPage: new LoginPage(page),
-    dashPage: new DashPage(page),
-    registerPage: new RegisterPage(page),
-    navbar: new Navbar(page),
+    mission: {
+        loginPage: new LoginPage(page),
+        dashPage: new DashPage(page),
+        registerPage: new RegisterPage(page),
+        navbar: new Navbar(page),
+    },
+    store: {
+        homePage: new HomePage(page),
+    },
     toast: new Toast(page),
 })
 
