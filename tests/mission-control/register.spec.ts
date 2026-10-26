@@ -1,9 +1,9 @@
-import { test, expect } from '../support'
+import { test, expect } from '../../support'
 import { faker } from '@faker-js/faker'
 
-import { Mission } from '../support/types'
+import { Mission } from '../../support/types'
 
-import { cleanAndInsertMission, cleanMission } from '../support/db'
+import { cleanAndInsertMission, cleanMission } from '../../support/db'
 
 test.beforeEach(async ({ app }) => {
     await app.loginPage.go()
