@@ -1,0 +1,42 @@
+{
+  "skill_name": "qa-test-automation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Automatiza este cenário:\n\nContexto: Dado que meu carrinho tem R$ 200 em produtos\n\nCenário: Aplicar um cupom válido\nQuando eu aplico um cupom válido de 10% de desconto\nEntão eu vejo o desconto de R$ 20 no resumo do carrinho\nE o total da minha compra passa a ser R$ 180",
+      "expected_output": "Lê as partes do projeto em assets/projeto/, descobre a tela do carrinho com o Playwright MCP, cria ou completa o Page Object na pasta do projeto e o registra na fixture, prepara carrinho e cupom exclusivos com o mecanismo de massa do projeto e os limpa ao final, escreve o teste com o título igual ao nome do cenário, roda e entrega o resumo.",
+      "assertions": [
+        "Lê as partes do projeto em assets/projeto/ antes de escrever código",
+        "O título do teste é exatamente 'Aplicar um cupom válido'",
+        "O Page Object novo não contém expect, dados de teste nem endereço completo",
+        "Os dados do teste são exclusivos, criados antes e removidos depois, inclusive em caso de falha",
+        "Há uma asserção para o Então e uma para o E, sem asserções extras",
+        "O teste foi executado e o resultado informado é o observado"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Automatiza o cenário 'Aplicar um cupom expirado' neste projeto. (A pasta assets/projeto/ da skill ainda está vazia.)",
+      "expected_output": "Percebe que a skill não tem partes do projeto em assets/projeto/, aponta quais arquivos do repositório servem de modelo (documento de arquitetura, playwright.config.ts, fixture, Page Objects, specs, utilitários de massa e tipos) e só escreve o teste depois que o usuário copiá-los.",
+      "assertions": [
+        "Informa que assets/projeto/ está vazio",
+        "Sugere arquivos reais do repositório como modelos, citando os caminhos",
+        "Avisa para não copiar senhas, tokens ou connection strings",
+        "Não escreve o teste antes de ter os modelos",
+        "Não inventa convenções que não existem no projeto"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Automatiza o cenário 'Finalizar a compra com cartão aprovado'. (A aplicação está parada e o endereço local não responde.)",
+      "expected_output": "Detecta que a aplicação está indisponível, não inventa a tela nem os locators, escreve apenas o que é possível com o que já existe no projeto ou pergunta como prosseguir, entrega como não executado e não declara que o teste passou.",
+      "assertions": [
+        "Informa que a aplicação não respondeu",
+        "Não inventa locators de telas que não conseguiu ver",
+        "Não declara que o teste passou",
+        "O resumo marca o resultado como 'não executado' com o motivo",
+        "Não altera configuração, credenciais ou endereços para contornar o problema"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "skill_name": "qa-test-automation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Automatiza este cenário do Mission Control:\n\nContexto: Dado que estou autenticado no Mission Control e no formulário de nova missão\n\nCenário: Cadastrar uma missão válida\nQuando eu cadastro uma missão com dados válidos\nEntão sou informado de que a missão foi adicionada ao catálogo",
+      "expected_output": "Lê docs/arquitetura.md, a config, a fixture, os Page Objects e specs do mission-control, reutiliza app.mission.registerPage e app.toast, escolhe um ID LP-0000A que não existe no repositório, prepara com cleanMission, escreve o teste em playwright/e2e/mission-control/register.spec.ts no padrão should ..., roda com --project=mission-control e entrega o resumo com a rastreabilidade cenário → título.",
+      "assertions": [
+        "Lê docs/arquitetura.md e os arquivos de playwright/ antes de escrever código",
+        "Reutiliza RegisterPage e Toast via app.mission.registerPage e app.toast, sem criar Page Object duplicado",
+        "Usa um ID de missão no formato LP-0000A que não aparece em nenhum outro arquivo",
+        "Prepara a massa com cleanMission antes de agir e não altera a conexão do banco",
+        "O título segue o padrão 'should ...' e o resumo mostra a correspondência com o nome do cenário",
+        "Há uma única asserção para o Então",
+        "Executa com --project=mission-control e informa o resultado observado"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Automatiza o cenário 'Missão esgotada aparece nos resultados sem opção de reserva' de docs/storefront.md.",
+      "expected_output": "Lê o cenário em docs/storefront.md, percebe que precisa de uma missão sem assentos disponíveis e que db.ts só insere missões (Reservation e Ticket só têm missionId), não inventa colunas e pergunta como criar o estado; não verifica contagem nem posição na vitrine; Page Objects novos ficam em playwright/support/pages/storefront/ e são registrados em app.store.",
+      "assertions": [
+        "Identifica o módulo storefront e usa app.store",
+        "Não inventa colunas de reservations ou tickets; pergunta ou confirma a estrutura antes de criar função de massa",
+        "Não usa asserção de contagem total ou posição de missões na vitrine",
+        "Não usa XPath, subida no DOM nem classe CSS",
+        "Não altera playwright.config.ts nem o baseURL do storefront"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Automatiza o cenário 'Emissão de tickets com sucesso após pagamento aprovado'. (A aplicação está parada e http://localhost:3000 não responde.)",
+      "expected_output": "Detecta que a aplicação está indisponível, não inventa a tela nem os locators, escreve apenas o que é possível com o que já existe no projeto ou pergunta como prosseguir, entrega como não executado e não declara que o teste passou.",
+      "assertions": [
+        "Informa que http://localhost:3000 não respondeu",
+        "Não inventa locators de telas que não conseguiu ver",
+        "Não declara que o teste passou",
+        "O resumo marca o resultado como 'não executado' com o motivo",
+        "Não altera configuração, baseURL, credenciais ou a conexão do banco para contornar o problema"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Automatiza um cenário do módulo de checkout administrativo, que ainda não tem testes na suíte.",
+      "expected_output": "Percebe que o módulo não existe em playwright/e2e nem em playwright.config.ts, explica que criar módulo exige alterar a configuração (seção 5 de docs/arquitetura.md) e pergunta antes de prosseguir.",
+      "assertions": [
+        "Informa que o módulo não existe na suíte",
+        "Não altera playwright.config.ts sem autorização",
+        "Cita o roteiro da seção 5 de docs/arquitetura.md"
+      ]
+    }
+  ]
+}

@@ -87,19 +87,14 @@ O storefront lista missões publicamente, então testes do mission-control rodan
 2. Para cada repetição: se o ID está numa constante usada de forma consistente no teste, troque por um ID exclusivo por arquivo/cenário (mantendo o formato `LP-0000`) e confirme que as asserções continuam coerentes. Se trocar for arriscado (o ID aparece em texto esperado fixo ou em dado de banco compartilhado), NÃO altere e registre no relatório.
 3. No `home.spec.ts`, procure asserções baseadas em contagem total de missões ou posição na lista. NÃO altere; apenas liste no relatório com arquivo e linha.
 
-## Passo 5 — Limpeza ao final dos testes que semeiam missões
-- Nos specs que chamam `cleanAndInsertMission` (ou `cleanMission`) no `beforeEach`, adicione um `test.afterEach` que chame `cleanMission(mission)` para não deixar massa no banco quando o teste falha.
-- Só faça isso onde a variável `mission` esteja acessível no escopo do `describe`. Onde não estiver, não force: registre no relatório.
-- Não crie fixture nova para isso.
-
-## Passo 6 — Organizar `support/db.ts` (somente comentários)
+## Passo 5 — Organizar `support/db.ts` (somente comentários)
 - NÃO divida o arquivo. Apenas agrupe as funções por assunto com comentários de seção (`// ---- missions ----`, `// ---- reservations ----`, `// ---- tickets ----`, conforme existir) e mova funções de lugar dentro do arquivo se necessário para ficarem juntas.
 - Nenhuma mudança de comportamento ou assinatura.
 
-## Passo 7 — Padronização de nome
+## Passo 6 — Padronização de nome
 - Procure no repositório (exceto `node_modules`) variações como `mission-controll`, `missionControll` e padronize para `mission-control` (pastas, config, docs, comentários). Não renomeie identificadores que mudariam comportamento sem checar os usos.
 
-## Passo 8 — Atualizar a documentação (`docs/arquitetura.md`)
+## Passo 7 — Atualizar a documentação (`docs/arquitetura.md`)
 - Atualize a árvore de diretórios para a estrutura real final.
 - Atualize o exemplo da fixture `app` (agrupada por módulo) na seção de fixtures.
 - Documente os `projects` do Playwright e o comando `npx playwright test --project=<modulo>`.
@@ -108,7 +103,7 @@ O storefront lista missões publicamente, então testes do mission-control rodan
 - A seção 5 (Recomendações e próximos passos) permanece como está.
 - Não edite outros arquivos de `docs/`.
 
-## Passo 9 — Conferência final (sem executar testes)
+## Passo 8 — Conferência final (sem executar testes)
 1. `npx playwright test --list`: mesmo número de testes do passo 0.
 2. Confirme com `grep` que nenhum import aponta para caminhos antigos (`pages/components`, `users`).
 3. `git status` limpo e commits por passo.
@@ -116,6 +111,6 @@ O storefront lista missões publicamente, então testes do mission-control rodan
 ## Relatório final (obrigatório, curto)
 1. Estrutura final de pastas (árvore).
 2. Resultado do `--list` (nº de testes antes e depois).
-3. Lista do que você NÃO conseguiu ou preferiu não alterar (passos 4 e 5) e por quê.
+3. Lista do que você NÃO conseguiu ou preferiu não alterar (passo 4) e por quê.
 4. Pontos em que a estrutura real diferiu deste prompt e como você adaptou.
 5. Pendências para decisão humana (ex.: baseURL do storefront).
