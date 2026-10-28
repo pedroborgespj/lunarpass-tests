@@ -12,3 +12,6 @@ node_modules/
 
 # QA Test Executor evidences
 /output/
+
+# Git Bash crash dumps
+*.stackdump
