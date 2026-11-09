@@ -1,3 +1,14 @@
+export interface LunarBase {
+    id: string,
+    name: string,
+    shortName: string,
+    tagline: string,
+    description: string,
+    imageUrl: string | null,
+    sortOrder: number,
+    isActive: boolean
+}
+
 export interface Mission {
     id: string,
     rocket: string,
@@ -8,9 +19,20 @@ export interface Mission {
 }
 
 export interface Reservation {
-    missionId: string
+    id: string,
+    userId: string | null,
+    missionId: string,
+    reservationCode: string,
+    contactEmail: string,
+    totalPrice: number,
+    status: string
 }
 
 export interface Ticket {
-    missionId: string
+    id: string,
+    reservationId: string,
+    missionId: string,
+    seat: string,
+    fullName: string,
+    document: string
 }

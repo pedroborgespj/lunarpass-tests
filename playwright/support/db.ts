@@ -1,9 +1,10 @@
 import { Pool } from 'pg'
 import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely'
 
-import { Mission, Reservation, Ticket } from './types'
+import { LunarBase, Mission, Reservation, Ticket } from './types'
 
 interface Database {
+    lunarBases: LunarBase,
     missions: Mission,
     reservations: Reservation,
     tickets: Ticket
@@ -20,6 +21,27 @@ export const db = new Kysely<Database>({
     dialect,
     plugins: [new CamelCasePlugin()]
 })
+
+// ---- lunar bases ----
+
+export async function cleanAndInsertLunarBase(base: LunarBase) {
+    await deleteLunarBase(base.id)
+    await insertLunarBase(base)
+}
+
+export async function insertLunarBase(base: LunarBase) {
+    await db
+        .insertInto('lunarBases')
+        .values(base)
+        .execute()
+}
+
+export async function deleteLunarBase(id: string) {
+    await db
+        .deleteFrom('lunarBases')
+        .where('id', '=', id)
+        .execute()
+}
 
 // ---- missions ----
 
@@ -50,6 +72,13 @@ export async function deleteMission(id: string) {
 
 // ---- reservations ----
 
+export async function insertReservation(reservation: Reservation) {
+    await db
+        .insertInto('reservations')
+        .values(reservation)
+        .execute()
+}
+
 export async function deleteReservation(missionId: string) {
     await db
         .deleteFrom('reservations')
@@ -58,6 +87,13 @@ export async function deleteReservation(missionId: string) {
 }
 
 // ---- tickets ----
+
+export async function insertTickets(tickets: Ticket[]) {
+    await db
+        .insertInto('tickets')
+        .values(tickets)
+        .execute()
+}
 
 export async function deleteTicket(missionId: string) {
     await db
