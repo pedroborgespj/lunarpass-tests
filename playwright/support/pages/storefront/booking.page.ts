@@ -9,6 +9,10 @@ export class BookingPage {
     readonly selectedSeatsMessage: Locator
     readonly continueButton: Locator
     readonly totalPrice: Locator
+    readonly paymentTitle: Locator
+    readonly nameInput: Locator
+    readonly passportInput: Locator
+    readonly paymentButton: Locator
 
     constructor(page: Page) {
         this.page = page
@@ -18,6 +22,24 @@ export class BookingPage {
         this.selectedSeatsMessage = page.getByText(/assentos selecionados:/)
         this.continueButton = page.getByRole('button', { name: 'Continuar' })
         this.totalPrice = page.getByTestId('summary-total-price')
+        this.paymentTitle = page.getByRole('heading', { level: 2, name: 'Pagamento' })
+        this.nameInput = page.getByRole('textbox', { name: 'Nome completo' })
+        this.passportInput = page.getByRole('textbox', { name: 'Passaporte' })
+        this.paymentButton = page.getByRole('button', { name: 'Ir para pagamento' })
+    }
+
+    fieldError(message: string): Locator {
+        return this.page.getByRole('alert').filter({ hasText: message })
+    }
+
+    async continue() {
+        await this.continueButton.click()
+    }
+
+    async submitPassenger(name: string, passport: string) {
+        await this.nameInput.fill(name)
+        await this.passportInput.fill(passport)
+        await this.paymentButton.click()
     }
 
     occupiedSeatMessage(code: string): Locator {
