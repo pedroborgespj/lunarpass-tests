@@ -1,5 +1,7 @@
 import { Page, Locator } from '@playwright/test'
 
+import { Passenger, Payment } from '../../types'
+
 export class BookingPage {
 
     readonly page: Page
@@ -13,6 +15,20 @@ export class BookingPage {
     readonly nameInput: Locator
     readonly passportInput: Locator
     readonly paymentButton: Locator
+    readonly contactEmailInput: Locator
+    readonly cardNameInput: Locator
+    readonly cardNumberInput: Locator
+    readonly cardExpiryInput: Locator
+    readonly cardCvvInput: Locator
+    readonly payButton: Locator
+    readonly paymentAlert: Locator
+    readonly confirmationTitle: Locator
+    readonly reservationCode: Locator
+    readonly simulationNotice: Locator
+    readonly tickets: Locator
+    readonly ticketPassengerNames: Locator
+    readonly ticketPassports: Locator
+    readonly ticketSeats: Locator
 
     constructor(page: Page) {
         this.page = page
@@ -26,6 +42,43 @@ export class BookingPage {
         this.nameInput = page.getByRole('textbox', { name: 'Nome completo' })
         this.passportInput = page.getByRole('textbox', { name: 'Passaporte' })
         this.paymentButton = page.getByRole('button', { name: 'Ir para pagamento' })
+        this.contactEmailInput = page.getByRole('textbox', { name: 'E-mail de contato' })
+        this.cardNameInput = page.getByRole('textbox', { name: 'Nome no cartão' })
+        this.cardNumberInput = page.getByRole('textbox', { name: 'Número do cartão' })
+        this.cardExpiryInput = page.getByRole('textbox', { name: 'Validade' })
+        this.cardCvvInput = page.getByRole('textbox', { name: 'CVV' })
+        this.payButton = page.getByRole('button', { name: 'Pagar e reservar' })
+        this.paymentAlert = page.getByRole('alert')
+        this.confirmationTitle = page.getByRole('heading', { level: 2, name: 'Sua reserva está confirmada.' })
+        this.reservationCode = page.getByTestId('reservation-code')
+        this.simulationNotice = page
+            .getByTestId('reservation-confirmation')
+            .getByRole('paragraph')
+            .filter({ hasText: 'nenhuma cobrança foi feita' })
+        this.tickets = page.getByTestId('reservation-ticket')
+        this.ticketPassengerNames = page.getByTestId('ticket-passenger-name')
+        this.ticketPassports = page.getByTestId('ticket-passport')
+        this.ticketSeats = page.getByTestId('ticket-seat')
+    }
+
+    async submitPassengers(passengers: Passenger[]) {
+        for (const passenger of passengers) {
+            const card = this.page
+                .getByTestId('passenger-card')
+                .filter({ hasText: `Assento ${passenger.seat}` })
+            await card.getByRole('textbox', { name: 'Nome completo' }).fill(passenger.fullName)
+            await card.getByRole('textbox', { name: 'Passaporte' }).fill(passenger.passport)
+        }
+        await this.paymentButton.click()
+    }
+
+    async pay(payment: Payment) {
+        await this.contactEmailInput.fill(payment.email)
+        await this.cardNameInput.fill(payment.cardName)
+        await this.cardNumberInput.fill(payment.cardNumber)
+        await this.cardExpiryInput.fill(payment.expiry)
+        await this.cardCvvInput.fill(payment.cvv)
+        await this.payButton.click()
     }
 
     fieldError(message: string): Locator {

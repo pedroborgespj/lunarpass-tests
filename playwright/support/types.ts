@@ -28,6 +28,20 @@ export interface Reservation {
     status: string
 }
 
+export interface Passenger {
+    seat: string,
+    fullName: string,
+    passport: string
+}
+
+export interface Payment {
+    email: string,
+    cardName: string,
+    cardNumber: string,
+    expiry: string,
+    cvv: string
+}
+
 export interface Ticket {
     id: string,
     reservationId: string,
