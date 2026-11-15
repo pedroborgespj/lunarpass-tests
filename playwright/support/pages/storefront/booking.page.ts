@@ -25,6 +25,7 @@ export class BookingPage {
     readonly confirmationTitle: Locator
     readonly reservationCode: Locator
     readonly paymentStatus: Locator
+    readonly paymentId: Locator
     readonly tickets: Locator
     readonly ticketPassengerNames: Locator
     readonly ticketPassports: Locator
@@ -52,6 +53,7 @@ export class BookingPage {
         this.confirmationTitle = page.getByRole('heading', { level: 2, name: 'Sua reserva está confirmada.' })
         this.reservationCode = page.getByTestId('reservation-code')
         this.paymentStatus = page.getByTestId('reservation-payment-status')
+        this.paymentId = page.getByTestId('reservation-payment-id')
         this.tickets = page.getByTestId('reservation-ticket')
         this.ticketPassengerNames = page.getByTestId('ticket-passenger-name')
         this.ticketPassports = page.getByTestId('ticket-passport')

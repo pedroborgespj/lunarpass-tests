@@ -16,6 +16,7 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     }
 
     await cleanAndInsertMission(mission)
+    await app.services.stripe.approvePayment('Visa', 'pi_3Uc4hjDEGZxgCFUp0N4fVJh1')
     await app.store.bookingPage.go(mission.id)
     await app.store.bookingPage.selectSeats(['A1', 'A2'])
     await app.store.bookingPage.continue()
@@ -39,6 +40,7 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
     await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
+    await expect(app.store.bookingPage.paymentId).toContainText('pi_3Uc4hjDEGZxgCFUp0N4fVJh1')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])
@@ -57,6 +59,7 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     }
 
     await cleanAndInsertMission(mission)
+    await app.services.stripe.approvePayment('Mastercard', 'pi_3Uc4hjDEGZxgCFUp0N4fVJh2')
     await app.store.bookingPage.go(mission.id)
     await app.store.bookingPage.selectSeats(['A1', 'A2'])
     await app.store.bookingPage.continue()
@@ -80,6 +83,7 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
     await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
+    await expect(app.store.bookingPage.paymentId).toContainText('pi_3Uc4hjDEGZxgCFUp0N4fVJh2')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])
@@ -98,6 +102,7 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     }
 
     await cleanAndInsertMission(mission)
+    await app.services.stripe.approvePayment('American Express', 'pi_3Uc4hjDEGZxgCFUp0N4fVJh3')
     await app.store.bookingPage.go(mission.id)
     await app.store.bookingPage.selectSeats(['A1', 'A2'])
     await app.store.bookingPage.continue()
@@ -121,13 +126,14 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
     await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
+    await expect(app.store.bookingPage.paymentId).toContainText('pi_3Uc4hjDEGZxgCFUp0N4fVJh3')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])
     await expect(app.store.bookingPage.ticketSeats).toHaveText(['A1', 'A2'])
 })
 
-test('should keep the data on the payment step when payment is declined', async ({ app }) => {
+test('should keep the data on the payment step when the card data is incorrect', async ({ app }) => {
     // Arrange
     const mission: Mission = {
         id: 'LP-0901B',
@@ -139,6 +145,7 @@ test('should keep the data on the payment step when payment is declined', async 
     }
 
     await cleanAndInsertMission(mission)
+    await app.services.stripe.rejectCardData('Visa')
     await app.store.bookingPage.go(mission.id)
     await app.store.bookingPage.selectSeat('A1')
     await app.store.bookingPage.continue()
@@ -160,6 +167,44 @@ test('should keep the data on the payment step when payment is declined', async 
     await expect(app.store.bookingPage.contactEmailInput).toHaveValue('buzz@lunarpass.dev')
     await expect(app.store.bookingPage.cardNameInput).toHaveValue('Buzz Aldrin')
     await expect(app.store.bookingPage.cardNumberInput).toHaveValue('4000 0000 0000 0127')
+    await expect(app.store.bookingPage.cardExpiryInput).toHaveValue('12/30')
+    await expect(app.store.bookingPage.cardCvvInput).toHaveValue('123')
+})
+
+test('should keep the data on the payment step when payment is declined by the card issuer', async ({ app }) => {
+    // Arrange
+    const mission: Mission = {
+        id: 'LP-0901F',
+        rocket: 'Starship',
+        baseId: 'orion',
+        departureDate: '2029-10-06',
+        returnDate: '2029-10-13',
+        price: 1000.00
+    }
+
+    await cleanAndInsertMission(mission)
+    await app.services.stripe.declinePayment('Visa')
+    await app.store.bookingPage.go(mission.id)
+    await app.store.bookingPage.selectSeat('A1')
+    await app.store.bookingPage.continue()
+    await app.store.bookingPage.submitPassenger('Buzz Aldrin', 'XP12345')
+
+    // Act
+    await app.store.bookingPage.pay({
+        email: 'buzz@lunarpass.dev',
+        cardName: 'Buzz Aldrin',
+        cardNumber: '4000 0000 0000 0002',
+        expiry: '12/30',
+        cvv: '123'
+    })
+
+    // Assert
+    await expect(app.store.bookingPage.paymentAlert).toContainText('Pagamento negado pela operadora do cartão.')
+    await expect(app.store.bookingPage.confirmationTitle).not.toBeVisible()
+    await expect(app.store.bookingPage.paymentTitle).toBeVisible()
+    await expect(app.store.bookingPage.contactEmailInput).toHaveValue('buzz@lunarpass.dev')
+    await expect(app.store.bookingPage.cardNameInput).toHaveValue('Buzz Aldrin')
+    await expect(app.store.bookingPage.cardNumberInput).toHaveValue('4000 0000 0000 0002')
     await expect(app.store.bookingPage.cardExpiryInput).toHaveValue('12/30')
     await expect(app.store.bookingPage.cardCvvInput).toHaveValue('123')
 })
@@ -195,6 +240,7 @@ test('should block the reservation when the seat was taken by someone else durin
     }
 
     await cleanAndInsertMission(mission)
+    await app.services.stripe.approvePayment('Visa', 'pi_3Uc4hjDEGZxgCFUp0N4fVJh4')
     await app.store.bookingPage.go(mission.id)
     await app.store.bookingPage.selectSeat('A1')
     await app.store.bookingPage.continue()
