@@ -25,18 +25,20 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     ])
 
     // Act
-    await app.store.bookingPage.pay({
+    await app.store.bookingPage.fillPayment({
         email: 'buzz@lunarpass.dev',
         cardName: 'Buzz Aldrin',
         cardNumber: '4242 4242 4242 4242',
         expiry: '12/30',
         cvv: '123'
     })
+    await expect(app.store.bookingPage.cardBrand('Visa')).toBeVisible()
+    await app.store.bookingPage.payButton.click()
 
     // Assert
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
-    await expect(app.store.bookingPage.simulationNotice).toHaveText('Pagamento aprovado. · Visa · nenhuma cobrança foi feita')
+    await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])
@@ -64,18 +66,20 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     ])
 
     // Act
-    await app.store.bookingPage.pay({
+    await app.store.bookingPage.fillPayment({
         email: 'buzz@lunarpass.dev',
         cardName: 'Buzz Aldrin',
         cardNumber: '5555 5555 5555 4444',
         expiry: '12/30',
         cvv: '123'
     })
+    await expect(app.store.bookingPage.cardBrand('Mastercard')).toBeVisible()
+    await app.store.bookingPage.payButton.click()
 
     // Assert
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
-    await expect(app.store.bookingPage.simulationNotice).toHaveText('Pagamento aprovado. · Mastercard · nenhuma cobrança foi feita')
+    await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])
@@ -103,18 +107,20 @@ test('should confirm the reservation and issue one ticket per passenger when pay
     ])
 
     // Act
-    await app.store.bookingPage.pay({
+    await app.store.bookingPage.fillPayment({
         email: 'buzz@lunarpass.dev',
         cardName: 'Buzz Aldrin',
         cardNumber: '3782 822463 10005',
         expiry: '12/30',
         cvv: '1234'
     })
+    await expect(app.store.bookingPage.cardBrand('American Express')).toBeVisible()
+    await app.store.bookingPage.payButton.click()
 
     // Assert
     await expect(app.store.bookingPage.confirmationTitle).toBeVisible()
     await expect(app.store.bookingPage.reservationCode).toHaveText(/^\S{6}$/)
-    await expect(app.store.bookingPage.simulationNotice).toHaveText('Pagamento aprovado. · American Express · nenhuma cobrança foi feita')
+    await expect(app.store.bookingPage.paymentStatus).toHaveText('Pagamento aprovado! Pode arrumar as malas: a Lua já está esperando por você.')
     await expect(app.store.bookingPage.tickets).toHaveCount(2)
     await expect(app.store.bookingPage.ticketPassengerNames).toHaveText(['Buzz Aldrin', 'Neil Armstrong'])
     await expect(app.store.bookingPage.ticketPassports).toHaveText(['XP12345', 'XP67890'])

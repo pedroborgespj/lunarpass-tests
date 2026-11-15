@@ -24,7 +24,7 @@ export class BookingPage {
     readonly paymentAlert: Locator
     readonly confirmationTitle: Locator
     readonly reservationCode: Locator
-    readonly simulationNotice: Locator
+    readonly paymentStatus: Locator
     readonly tickets: Locator
     readonly ticketPassengerNames: Locator
     readonly ticketPassports: Locator
@@ -51,10 +51,7 @@ export class BookingPage {
         this.paymentAlert = page.getByRole('alert')
         this.confirmationTitle = page.getByRole('heading', { level: 2, name: 'Sua reserva está confirmada.' })
         this.reservationCode = page.getByTestId('reservation-code')
-        this.simulationNotice = page
-            .getByTestId('reservation-confirmation')
-            .getByRole('paragraph')
-            .filter({ hasText: 'nenhuma cobrança foi feita' })
+        this.paymentStatus = page.getByTestId('reservation-payment-status')
         this.tickets = page.getByTestId('reservation-ticket')
         this.ticketPassengerNames = page.getByTestId('ticket-passenger-name')
         this.ticketPassports = page.getByTestId('ticket-passport')
@@ -72,12 +69,20 @@ export class BookingPage {
         await this.paymentButton.click()
     }
 
-    async pay(payment: Payment) {
+    cardBrand(brand: string): Locator {
+        return this.page.getByRole('img', { name: `Bandeira ${brand}` })
+    }
+
+    async fillPayment(payment: Payment) {
         await this.contactEmailInput.fill(payment.email)
         await this.cardNameInput.fill(payment.cardName)
         await this.cardNumberInput.fill(payment.cardNumber)
         await this.cardExpiryInput.fill(payment.expiry)
         await this.cardCvvInput.fill(payment.cvv)
+    }
+
+    async pay(payment: Payment) {
+        await this.fillPayment(payment)
         await this.payButton.click()
     }
 
